@@ -31,6 +31,10 @@
 char g_path_sep = '/';
 char g_field_sep = ';';
 char g_tag_sep = ' ';
+std::string g_common_path;
+
+std::string fname_cloud( "htcl_cloud.html" );
+std::string fname_links( "htcl_links.html" );
 
 //------------------------------------------------------------------
 struct File
@@ -118,8 +122,8 @@ ReadInputFile( std::string fn )
 	datafile.open( fn, std::ios_base::in );
 	if( !datafile.is_open() )
 	{
-		std::cerr << " -unable to open file\n";
-		exit(1);
+		std::cerr << " -unable to open file " << fn << '\n';
+		throw "unable to open file";
 	}
 	std::vector<Tag> v_tags;
 	char buf[BUF_SIZE];
@@ -131,7 +135,7 @@ ReadInputFile( std::string fn )
 		std::string line(buf);
 		if( datafile.eof() )
 		{
-			std::cerr << " - Reached EOF in file\n";
+//			std::cerr << " - Reached EOF in file\n";
 			go_on = false;
 		}
 		else
@@ -153,8 +157,16 @@ ReadInputFile( std::string fn )
 }
 //------------------------------------------------------------------
 void
-GenerateTagCloud( std::ofstream& f, const std::vector<Tag>& v_tags )
+GenerateTagCloud( const std::vector<Tag>& v_tags )
 {
+	std::ofstream f;
+	f.open( fname_cloud );
+	if( !f.is_open() )
+	{
+		std::cerr << "Error: unable to open file " << fname_cloud << '\n';
+		throw "unable to open file";
+	}
+
 	f << "<div id='tag_cloud'>\n";
 	for( const auto tag: v_tags )
 	{
@@ -164,8 +176,15 @@ GenerateTagCloud( std::ofstream& f, const std::vector<Tag>& v_tags )
 }
 //------------------------------------------------------------------
 void
-GenerateTagLinks( std::ofstream& f, const std::vector<Tag>& v_tags )
+GenerateTagLinks( const std::vector<Tag>& v_tags )
 {
+	std::ofstream f;
+	f.open( fname_links );
+	if( !f.is_open() )
+	{
+		std::cerr << "Error: unable to open file " << fname_links << '\n';
+		throw "unable to open file";
+	}
 
 	f << "<div id='tag_links'>\n";
 	f << "<ul>\n";
@@ -175,16 +194,35 @@ GenerateTagLinks( std::ofstream& f, const std::vector<Tag>& v_tags )
 		f << tag._tag_name << ": ";
 		for( const auto& file: tag._vfiles )
 		{
-			f << "<a href='" << file._path << g_path_sep << file._fname
-				<< "'>" << file._fname << "</a>\n";
+			f << "<a href='";
+			if( !g_common_path.empty() )
+				f << g_common_path << g_path_sep;
+			f << file._path << g_path_sep
+			  << file._fname
+			  << "'>" << file._fname << "</a>\n";
 		}
 		f << "</li>\n";
 	}
 	f << "</ul></div>\n";
 }
 //------------------------------------------------------------------
+void
+Usage()
+{
+	std::cout << "htcl: Html Tag CLoud generator\n";
+	std::cout << "usage: htcl <inputfile> [common_path]\n";
+}
+//------------------------------------------------------------------
 int main( int argc, const char** argv )
 {
+	if( argc < 2 )
+	{
+		Usage();
+		return 1;
+	}
+	if( argc > 2 )
+		g_common_path = argv[2];
+
 	// 1 - read input file and build array of tags
 	auto v_tags = ReadInputFile( argv[1] );
 
@@ -194,17 +232,8 @@ int main( int argc, const char** argv )
 		[](const Tag& t1, const Tag& t2) { return t1._tag_name<t2._tag_name; }
 	);
 
-	// 2 - generate html code
-	std::ofstream f;
-	f.open( "outfile.html" );
-	if( !f.is_open() )
-	{
-		std::cerr << "Error: unable to open file\n"; // << _fullname << ENDL;
-		throw "unable to open file";
-	}
-
-	GenerateTagCloud( f, v_tags );
-	GenerateTagLinks( f, v_tags );
+	GenerateTagCloud( v_tags );
+	GenerateTagLinks( v_tags );
 }
 //------------------------------------------------------------------
 // (eof)

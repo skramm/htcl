@@ -91,27 +91,29 @@ ProcessLine( const std::string& line, std::vector<Tag>& v_output )
 		return;
 
 	auto v_tokens = Tokenize( line, g_field_sep, 3 ); // tokenize the whole line and separate into 3 strings
-	assert( v_tokens.size()==3 );
 
-//	if( v_tokens.size()>2 )
+	if( v_tokens.size() != 3 )
 	{
-		auto f_path = v_tokens[0];
-		auto f_name = v_tokens[1];
-		File fil{ f_path, f_name };
+		std::cerr << "error: line has not 3 tokens:\n*" << line << "*\n";
+		throw "error: not enough tokens";
+	}
 
-		auto v_tags_str = Tokenize( v_tokens[2], g_tag_sep, 0 ); // tokenize the space-separated tags
-		for( const auto& tag_str: v_tags_str )
-		{
-			auto it = std::find_if(
-				std::begin(v_output),
-				std::end(v_output),
-				[&tag_str]( const Tag& t ){ return t._tag_name == tag_str; } // lambda
-			);
-			if( it == std::end(v_output) )
-				v_output.push_back( Tag( tag_str, fil ) );  // not found: new tag
-			else
-				it->_vfiles.push_back( fil );               // found; update tag by adding file
-		}
+	auto f_path = v_tokens[0];
+	auto f_name = v_tokens[1];
+	File fil{ f_path, f_name };
+
+	auto v_tags_str = Tokenize( v_tokens[2], g_tag_sep, 0 ); // tokenize the space-separated tags
+	for( const auto& tag_str: v_tags_str )
+	{
+		auto it = std::find_if(
+			std::begin(v_output),
+			std::end(v_output),
+			[&tag_str]( const Tag& t ){ return t._tag_name == tag_str; } // lambda
+		);
+		if( it == std::end(v_output) )
+			v_output.push_back( Tag( tag_str, fil ) );  // not found: new tag
+		else
+			it->_vfiles.push_back( fil );               // found; update tag by adding file
 	}
 }
 //------------------------------------------------------------------
@@ -191,7 +193,7 @@ GenerateTagLinks( const std::vector<Tag>& v_tags )
 	for( const auto& tag: v_tags )
 	{
 		f << "<li id='t_" << tag._tag_name << "'>\n";
-		f << tag._tag_name << ": ";
+		f << tag._tag_name << ":\n";
 		for( const auto& file: tag._vfiles )
 		{
 			f << "<a href='";
@@ -210,7 +212,7 @@ void
 Usage()
 {
 	std::cout << "htcl: Html Tag CLoud generator\n";
-	std::cout << "usage: htcl <inputfile> [common_path]\n";
+	std::cout << "usage: htcl <inputfile> [] [common_path]\n";
 }
 //------------------------------------------------------------------
 int main( int argc, const char** argv )
@@ -221,7 +223,13 @@ int main( int argc, const char** argv )
 		return 1;
 	}
 	if( argc > 2 )
-		g_common_path = argv[2];
+	{
+		assert( std::string(argv[2]).size() == 1 );
+		g_field_sep = argv[2][0];
+	}
+
+	if( argc > 3 )
+		g_common_path = argv[3];
 
 	// 1 - read input file and build array of tags
 	auto v_tags = ReadInputFile( argv[1] );

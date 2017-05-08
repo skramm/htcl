@@ -2,8 +2,10 @@
 
 * language: c++11
 * status: beta
+* motivation: couldn't find any similar tool...
 
 ### Use case ###
+
 Say you have some set of resource files (pdf, html pages, whatever), each of them describing a few topics.
 This set of files is referenced as links on a main "index" html pages. Fine.
 
@@ -56,26 +58,32 @@ This input file run through htcl will produce these two files:
 <div id='tag_links'>
 <ul>
 <li id='t_basic'>
-basic: <a href='folder1/file3.pdf'>file3.pdf</a>
+basic:
+<a href='folder1/file3.pdf'>file3.pdf</a>
 </li>
 <li id='t_c++'>
-c++: <a href='folder1/file1.pdf'>file1.pdf</a>
+c++:
+<a href='folder1/file1.pdf'>file1.pdf</a>
 </li>
 <li id='t_java'>
-java: <a href='folder1/file1.pdf'>file1.pdf</a>
+java:
+<a href='folder1/file1.pdf'>file1.pdf</a>
 <a href='folder1/file2.pdf'>file2.pdf</a>
 <a href='folder1/file3.pdf'>file3.pdf</a>
 </li>
 <li id='t_perl'>
-perl: <a href='folder1/file3.pdf'>file3.pdf</a>
+perl:
+<a href='folder1/file3.pdf'>file3.pdf</a>
 <a href='folder2/file1.pdf'>file1.pdf</a>
 </li>
 <li id='t_python'>
-python: <a href='folder1/file1.pdf'>file1.pdf</a>
+python:
+<a href='folder1/file1.pdf'>file1.pdf</a>
 <a href='folder1/file2.pdf'>file2.pdf</a>
 </li>
 <li id='t_shell'>
-shell: <a href='folder1/file2.pdf'>file2.pdf</a>
+shell:
+<a href='folder1/file2.pdf'>file2.pdf</a>
 </li>
 </ul></div>
 ```

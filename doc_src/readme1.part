@@ -2,8 +2,10 @@
 
 * language: c++11
 * status: beta
+* motivation: couldn't find any similar tool...
 
 ### Use case ###
+
 Say you have some set of resource files (pdf, html pages, whatever), each of them describing a few topics.
 This set of files is referenced as links on a main "index" html pages. Fine.
 

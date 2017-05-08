@@ -25,6 +25,7 @@
 		<Unit filename="README.md" />
 		<Unit filename="build.sh" />
 		<Unit filename="main.cpp" />
+		<Unit filename="sample1.csv" />
 		<Extensions>
 			<envvars />
 			<code_completion />

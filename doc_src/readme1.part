@@ -9,7 +9,7 @@ This set of files is referenced as links on a main "index" html pages. Fine.
 
 But what if a user wants to find and/or read all the files where a given topic is referenced ?
 
-This tool will generate from amanually written input csv file two small html snippets that you can insert into the index html page.
+This tool will generate from a manually written input csv file two small html snippets that you can insert into the index html page.
 
 The two output files will be:
  * `htcl_cloud.html`: holds a cloud tag, as a set of internal links on the file links below
